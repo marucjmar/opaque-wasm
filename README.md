@@ -35,6 +35,6 @@ try {
 
   console.log(accessToken); // eyhojo55....
 } catch (e) {
-  console.log(e);
+  console.error(e);
 }
 ```

@@ -30,7 +30,7 @@ try {
 
   const login = new Login();
   const firstLoginMessage = login.start(password);
-  const secondLoginMessage = await sendMessageToServer(firstLoginMessage);
+  const secondLoginMessage = await sendMessageToServer(firstLoginMessage, email);
   const thirdLoginMessage = login.finish(secondLoginMessage);
   const { accessToken } = await sendMessageToServer(thirdLoginMessage);
 

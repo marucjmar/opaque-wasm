@@ -42,29 +42,30 @@ impl Registration {
     }
 
     pub fn start(&mut self, password: Vec<u8>) -> Result<Vec<u8>, JsValue> {
-        let (message, client_state) = ClientRegistration::<Default>::start(
+        let (message, client_state) = match ClientRegistration::<Default>::start(
             &password,
             ClientRegistrationStartParameters::default(),
             &mut self.rng,
-        )
-        .unwrap();
+        ) {
+            Ok(reply) => reply,
+            Err(_e) => return Err("Start failed".into()),
+        };
         self.state = Some(client_state);
 
         return Ok(message.serialize());
     }
 
     pub fn finish(self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
-        let message = RegisterSecondMessage::deserialize(&message[..]);
-        if message.is_err() {
-            return Err("Message deserialize failed".into());
-        }
+        let message = match RegisterSecondMessage::deserialize(&message[..]) {
+            Ok(message) => message,
+            Err(_e) => return Err("Message deserialize failed".into()),
+        };
         let mut rng = self.rng;
 
-        let (message, _s) = self
-            .state
-            .unwrap()
-            .finish(message.unwrap(), &mut rng)
-            .unwrap();
+        let (message, _s) = match self.state.unwrap().finish(message, &mut rng) {
+            Ok(reply) => reply,
+            Err(_e) => return Err("Mismatch messagess".into()),
+        };
         return Ok(message.serialize());
     }
 }
@@ -86,17 +87,14 @@ impl Login {
     }
 
     pub fn start(&mut self, password: Vec<u8>) -> Result<Vec<u8>, JsValue> {
-        let client_login_start_result = ClientLogin::<Default>::start(
+        let result = match ClientLogin::<Default>::start(
             &password,
             &mut self.rng,
             ClientLoginStartParameters::default(),
-        );
-
-        if client_login_start_result.is_err() {
-            return Err("Failed start".into());
-        }
-
-        let result = client_login_start_result.unwrap();
+        ) {
+            Ok(result) => result,
+            Err(_e) => return Err("Failed start".into()),
+        };
 
         self.state = Some(result.client_login_state);
 

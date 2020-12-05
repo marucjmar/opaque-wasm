@@ -23,10 +23,10 @@ try {
   const registration = new Registration();
   const firstMessage = registration.start(password);
   const secondMessage = await sendMessageToServer(firstMessage);
-  const thirdMessage = reg.finish(secondMessage);
+  const thirdMessage = registration.finish(secondMessage);
   const { status } = await sendMessageToServer(thirdMessage, { email });
 
-  console.log(status); // 204 Server Return ok, user account has been created
+  console.log(status); // 204 - Server Return ok, user account has been created
 
   const login = new Login();
   const firstLoginMessage = login.start(password);

@@ -8,7 +8,6 @@ Note: This package will be published in npm when version 0.3.x of [opaque-ke](ht
 
 ```
 wasm-pack build
-
 ```
 
 ### JS simple example of usage

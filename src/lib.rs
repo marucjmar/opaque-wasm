@@ -152,18 +152,20 @@ impl Login {
         return Ok(client_login_start_result.message.serialize());
     }
 
-    pub fn finish(&self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+    pub fn finish(&mut self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
         let message = CredentialResponse::deserialize(&message[..]);
 
         if message.is_err() {
             return Err("Message deserialize failed".into());
         }
 
-        let result = self.state.unwrap().finish(message.unwrap(), ClientLoginFinishParameters::default());
+        let mut state = self.state.take();
 
-        self.session_key = Some(result.session_key)
+        let result = state.unwrap().finish(message.unwrap(), ClientLoginFinishParameters::default()).unwrap();
 
-        return Ok(result.unwrap().message.serialize());
+        self.session_key = Some(result.session_key);
+
+        return Ok(result.message.serialize());
     }
 
     pub fn get_session_key(self) -> Result<Vec<u8>, JsValue> {

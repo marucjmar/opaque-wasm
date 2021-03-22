@@ -7,7 +7,8 @@ use opaque_ke::keypair::KeyPair;
 use opaque_ke::{
     ClientLogin, ClientLoginFinishParameters, ClientLoginStartParameters, ClientRegistration,
     CredentialResponse, RegistrationResponse, ClientRegistrationFinishParameters, ServerRegistration,
-    ServerLogin, ServerLoginStartParameters, RegistrationRequest, CredentialRequest
+    ServerLogin, ServerLoginStartParameters, RegistrationRequest, CredentialRequest, RegistrationUpload,
+    CredentialFinalization,
 };
 use rand_core::OsRng;
 use wasm_bindgen::prelude::*;
@@ -62,7 +63,7 @@ impl Registration {
         };
         let mut rng = self.rng;
 
-        let client_finish_registration_result = match self.state.unwrap().finish(&mut rng, message, ClientRegistrationFinishParameters::default(),) {
+        let client_finish_registration_result = match self.state.unwrap().finish(&mut rng, message, ClientRegistrationFinishParameters::default()) {
             Ok(reply) => reply,
             Err(_e) => return Err("Mismatch messagess".into()),
         };
@@ -72,8 +73,8 @@ impl Registration {
 
 #[wasm_bindgen]
 pub struct HandleRegistration {
-    state: Option<ServerRegistration<Default>>,
     rng: OsRng,
+    state: Option<ServerRegistration<Default>>,
 }
 
 #[wasm_bindgen]
@@ -81,14 +82,14 @@ impl HandleRegistration {
     #[wasm_bindgen(constructor)]
     pub fn new() -> HandleRegistration {
         HandleRegistration {
-            state: None,
             rng: OsRng,
+            state: None,
         }
     }
 
     pub fn start (&mut self, registration_request: Vec<u8>, server_privatekey: Vec<u8>) -> Result<Vec<u8>, JsValue> {
 
-        let server_kp: KeyPair::<curve25519_dalek::ristretto::RistrettoPoint> = KeyPair::from_private_key_slice(&server_privatekey).unwrap();
+        let server_kp = KeyPair::<curve25519_dalek::ristretto::RistrettoPoint>::from_private_key_slice(&server_privatekey).unwrap();
         let request = match RegistrationRequest::deserialize(&registration_request[..])
         {
             Ok(message) => message,
@@ -103,8 +104,18 @@ impl HandleRegistration {
             Ok(message) => message,
             Err(_e) => return Err("Message deserialize failed".into()),
         };
+
+        self.state = Some(server_registration_start_result.state);
         
         return Ok(server_registration_start_result.message.serialize());
+    }
+
+    pub fn finish(self, registration_finish: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+
+        let message = RegistrationUpload::deserialize(&registration_finish[..]).unwrap();
+        let password_file = self.state.unwrap().finish(message).unwrap();
+
+        return Ok(password_file.serialize());
     }
 }
 
@@ -112,6 +123,7 @@ impl HandleRegistration {
 pub struct Login {
     state: Option<ClientLogin<Default>>,
     rng: OsRng,
+    session_key: Option<Vec<u8>>,
 }
 
 #[wasm_bindgen]
@@ -121,6 +133,7 @@ impl Login {
         Login {
             rng: OsRng,
             state: None,
+            session_key: None,
         }
     }
 
@@ -139,23 +152,22 @@ impl Login {
         return Ok(client_login_start_result.message.serialize());
     }
 
-    pub fn finish(self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+    pub fn finish(&self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
         let message = CredentialResponse::deserialize(&message[..]);
 
         if message.is_err() {
             return Err("Message deserialize failed".into());
         }
 
-        let result = match self
-            .state
-            .unwrap()
-            .finish(message.unwrap(), ClientLoginFinishParameters::default())
-        {
-            Ok(result) => result,
-            Err(_e) => return Err("Mismatch messagess".into()),
-        };
+        let result = self.state.unwrap().finish(message.unwrap(), ClientLoginFinishParameters::default());
 
-        return Ok(result.message.serialize());
+        self.session_key = Some(result.session_key)
+
+        return Ok(result.unwrap().message.serialize());
+    }
+
+    pub fn get_session_key(self) -> Result<Vec<u8>, JsValue> {
+        return Ok(self.session_key.unwrap());
     }
 }
 
@@ -177,7 +189,7 @@ impl HandleLogin {
 
     pub fn start(&mut self, password_file: Vec<u8>, credential_request: Vec<u8>, server_privatekey: Vec<u8> ) -> Result<Vec<u8>, JsValue> {
 
-        let server_kp: KeyPair::<curve25519_dalek::ristretto::RistrettoPoint> = KeyPair::from_private_key_slice(&server_privatekey).unwrap();
+        let server_kp = KeyPair::<curve25519_dalek::ristretto::RistrettoPoint>::from_private_key_slice(&server_privatekey).unwrap();
 
         let request = CredentialRequest::deserialize(&credential_request[..]).unwrap();
         let password = ServerRegistration::<Default>::deserialize(&password_file[..]).unwrap();
@@ -193,6 +205,17 @@ impl HandleLogin {
             Err(_e) => return Err("Message deserialize failed".into()),
         };
 
+        self.state = Some(server_login_start_result.state);
+
         return Ok(server_login_start_result.message.serialize());
+    }
+
+    pub fn finish(self, credential_finish: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+    
+        let finish = CredentialFinalization::deserialize(&credential_finish[..]).unwrap();
+
+        let result = self.state.unwrap().finish(finish).unwrap();
+        
+        return Ok(result.session_key);
     }
 }

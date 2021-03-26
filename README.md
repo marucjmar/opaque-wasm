@@ -10,6 +10,11 @@ Note: This package will be published in npm when version 0.3.x of [opaque-ke](ht
 wasm-pack build
 ```
 
+### Build for NodeJs
+```
+wasm-pack build --target nodejs
+```
+
 ### JS simple example of usage
 
 ```js
@@ -31,9 +36,10 @@ try {
   const firstLoginMessage = login.start(password);
   const secondLoginMessage = await sendMessageToServer(firstLoginMessage, email);
   const thirdLoginMessage = login.finish(secondLoginMessage);
-  const { accessToken } = await sendMessageToServer(thirdLoginMessage);
+  const sessionKey = login.get_session_key();
+  await sendMessageToServer(thirdLoginMessage);
 
-  console.log(accessToken); // eyhojo55....
+  console.log(sessionKey); // eyhojo55....
 } catch (e) {
   console.error(e);
 }

@@ -4,16 +4,13 @@
 
 Note: This package will be published in npm when version 0.3.x of [opaque-ke](https://github.com/novifinancial/opaque-ke) has been stable.
 
-### Build ES6 package
+### Installation
 
 ```
-wasm-pack build
+npm install --save opaque-wasm
+yarn add opaque-wasm
 ```
 
-### Build for NodeJs
-```
-wasm-pack build --target nodejs
-```
 
 ### JS simple example of usage
 
@@ -36,11 +33,22 @@ try {
   const firstLoginMessage = login.start(password);
   const secondLoginMessage = await sendMessageToServer(firstLoginMessage, email);
   const thirdLoginMessage = login.finish(secondLoginMessage);
-  const sessionKey = login.get_session_key();
+  const sessionKey = login.getSessionKey();
   await sendMessageToServer(thirdLoginMessage);
 
   console.log(sessionKey); // eyhojo55....
 } catch (e) {
   console.error(e);
 }
+```
+
+### Build ES6 package
+
+```
+wasm-pack build
+```
+
+### Build for NodeJs
+```
+wasm-pack build --target nodejs
 ```

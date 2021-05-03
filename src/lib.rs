@@ -2,13 +2,11 @@ mod hash_methods;
 mod utils;
 
 use hash_methods::Scrypt;
-use opaque_ke::ciphersuite::CipherSuite;
-use opaque_ke::keypair::KeyPair;
 use opaque_ke::{
     ClientLogin, ClientLoginFinishParameters, ClientLoginStartParameters, ClientRegistration,
     CredentialResponse, RegistrationResponse, ClientRegistrationFinishParameters, ServerRegistration,
     ServerLogin, ServerLoginStartParameters, RegistrationRequest, CredentialRequest, RegistrationUpload,
-    CredentialFinalization,
+    CredentialFinalization, keypair::KeyPair, ciphersuite::CipherSuite
 };
 use rand_core::OsRng;
 use wasm_bindgen::prelude::*;
@@ -159,7 +157,7 @@ impl Login {
             return Err("Message deserialize failed".into());
         }
 
-        let mut state = self.state.take();
+        let state = self.state.take();
 
         let result = state.unwrap().finish(message.unwrap(), ClientLoginFinishParameters::default()).unwrap();
 
@@ -168,6 +166,7 @@ impl Login {
         return Ok(result.message.serialize());
     }
 
+    #[wasm_bindgen(js_name = getSessionKey)]
     pub fn get_session_key(self) -> Result<Vec<u8>, JsValue> {
         return Ok(self.session_key.unwrap());
     }

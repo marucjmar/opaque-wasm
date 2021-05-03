@@ -1,4 +1,4 @@
-import { Registration, Login, HandleRegistration, HandleLogin } from 'opaque-wasm'
+import { Registration, Login, HandleRegistration, HandleLogin } from 'opaque-wasm';
 
 const password = 'test123'
 const email = 'dave@test.com'
@@ -43,7 +43,7 @@ async function run() {
 
     console.log(login)
 
-    console.log('client session key',login.get_session_key())
+    console.log('client session key',login.getSessionKey())
 
     const server_finish = serverLogin.finish(login_final)
     console.log('server session key', server_finish)

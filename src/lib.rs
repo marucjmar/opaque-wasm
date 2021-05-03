@@ -8,9 +8,8 @@ use opaque_ke::{
     ServerLogin, ServerLoginStartParameters, RegistrationRequest, CredentialRequest, RegistrationUpload,
     CredentialFinalization, keypair::KeyPair, ciphersuite::CipherSuite
 };
-use rand_core::OsRng;
+use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
-
 struct Default;
 impl CipherSuite for Default {
     type Group = curve25519_dalek::ristretto::RistrettoPoint;

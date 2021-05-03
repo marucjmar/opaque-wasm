@@ -16,8 +16,7 @@ opaque-ke = { version = "0.5.0", features = ["slow-hash"] }
 curve25519-dalek = "3"
 sha2 = "0.9.2"
 scrypt = { version = "0.5.0" }
-rand = { version = "0.8.3"}
-rand_core = { version = "0.6.2", features = ["getrandom"] }
+rand = { version = "0.8.3" }
 getrandom = { version = "0.2", features = ["js", "wasm-bindgen"] }
 
 generic-array = "0.14.4"

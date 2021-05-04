@@ -1,8 +1,6 @@
-<h1><code>opaque-wasm-js</code></h1>
+## opaque-wasm
 
-<strong>An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly) hosted by the browser. The library was founded on the basis of [opaque-ke](https://github.com/novifinancial/opaque-ke). </strong>
-
-Note: This package will be published in npm when version 0.3.x of [opaque-ke](https://github.com/novifinancial/opaque-ke) has been stable.
+An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly) hosted by the browser. The library was founded on the basis of [opaque-ke](https://github.com/novifinancial/opaque-ke).
 
 ### Installation
 

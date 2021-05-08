@@ -16,5 +16,6 @@ matrix:
     script:
       - wasm-pack build --target nodejs
       - cd ./js-test
+      - node -v
       - npm install
       - node --experimental-modules ./test.mjs

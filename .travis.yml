@@ -1,13 +1,16 @@
-language: node_js
-node_js:
-  - 14
-  - node
+language: rust
 sudo: false
+
+cache: cargo
+
+before_install:
+  - nvm install node 
 
 matrix:
   include:
+
+  # Builds with wasm-pack.
   - rust: beta
-    cache: cargo
     env: RUST_BACKTRACE=1
     before_script:
       - (test -x $HOME/.cargo/bin/cargo-install-update || cargo install cargo-update)

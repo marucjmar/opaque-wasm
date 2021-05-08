@@ -1,6 +1,6 @@
 ## opaque-wasm
 
-An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly). The library was founded on the basis of [opaque-ke](https://github.com/novifinancial/opaque-ke).
+An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly). This implementation is based on the [opaque-ke](https://github.com/novifinancial/opaque-ke).
 
 ### Installation
 

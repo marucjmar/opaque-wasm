@@ -5,8 +5,8 @@ cache: cargo
 
 matrix:
   include:
-    - language: node.js
-      node_js: "14.16.3"
+  - language: node.js
+    node_js: "14.16.3"
 
   # Builds with wasm-pack.
   - rust: beta

@@ -1,14 +1,11 @@
 language: rust
+node_js: 16
 sudo: false
 
 cache: cargo
 
 matrix:
   include:
-  - language: node.js
-    node_js: "14.16.3"
-
-  # Builds with wasm-pack.
   - rust: beta
     env: RUST_BACKTRACE=1
     before_script:

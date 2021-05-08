@@ -15,4 +15,6 @@ matrix:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -f
     script:
       - wasm-pack build --target nodejs
-      - node --experimental-modules ./js-test/test.mjs
+      - cd ./js-test
+      - npm install
+      - node --experimental-modules ./test.mjs

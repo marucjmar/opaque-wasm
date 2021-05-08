@@ -1,20 +1,9 @@
-use digest::Digest;
-use generic_array::typenum::Unsigned;
-use generic_array::GenericArray;
-use opaque_ke::errors::InternalPakeError;
-use opaque_ke::hash::Hash;
-use opaque_ke::slow_hash::SlowHash;
+use opaque_ke::ciphersuite::CipherSuite;
 
-pub struct Scrypt;
-
-impl<D: Hash> SlowHash<D> for Scrypt {
-  fn hash(
-    input: GenericArray<u8, <D as Digest>::OutputSize>,
-  ) -> Result<Vec<u8>, InternalPakeError> {
-    let params = scrypt::ScryptParams::new(15, 8, 1).unwrap();
-    let mut output = vec![0u8; <D as Digest>::OutputSize::to_usize()];
-    scrypt::scrypt(&input, &[], &params, &mut output)
-      .map_err(|_| InternalPakeError::SlowHashError)?;
-    Ok(output)
-  }
+pub struct Default;
+impl CipherSuite for Default {
+  type Group = curve25519_dalek::ristretto::RistrettoPoint;
+  type KeyExchange = opaque_ke::key_exchange::tripledh::TripleDH;
+  type Hash = sha2::Sha512;
+  type SlowHash = scrypt::ScryptParams;
 }

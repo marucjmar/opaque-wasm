@@ -1,6 +1,6 @@
 ## opaque-wasm
 
-An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly) hosted by the browser. The library was founded on the basis of [opaque-ke](https://github.com/novifinancial/opaque-ke).
+An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly). The library was founded on the basis of [opaque-ke](https://github.com/novifinancial/opaque-ke).
 
 ### Installation
 
@@ -11,6 +11,7 @@ yarn add opaque-wasm
 
 
 ### JS simple example of usage
+Check full implementation in this [file](https://github.com/marucjmar/opaque-wasm/blob/master/js-test/test.mjs)
 
 ```js
 import { Registration, Login } from "opaque-wasm";

@@ -1,5 +1,7 @@
 language: rust
-node_js: 16
+node_js:
+  - 16
+  - node
 sudo: false
 
 cache: cargo

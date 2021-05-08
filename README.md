@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/marucjmar/opaque-wasm.svg?branch=master)](https://travis-ci.com/marucjmar/opaque-wasm)
+
 ## opaque-wasm
 
 An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly). This implementation is based on the [opaque-ke](https://github.com/novifinancial/opaque-ke).

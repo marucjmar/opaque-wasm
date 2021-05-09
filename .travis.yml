@@ -8,8 +8,6 @@ before_install:
 
 matrix:
   include:
-
-  # Builds with wasm-pack.
   - rust: beta
     env: RUST_BACKTRACE=1
     before_script:

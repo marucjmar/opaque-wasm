@@ -1,9 +1,11 @@
 [package]
 name = "opaque-wasm"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Marcin Lazar <marcin.lazar@pm.me>"]
 edition = "2018"
 repository = "https://github.com/marucjmar/opaque-wasm"
+keywords = ["cryptography", "crypto", "opaque", "passwords", "authentication", "wasm", "js", "browser", "webassembly", "node", "wasm-pack", "bindgen", "wasm-bindgen"]
+description = "An implementation of the OPAQUE key exchange protocol in WASM(WebAssembly)"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

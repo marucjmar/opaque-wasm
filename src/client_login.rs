@@ -10,6 +10,7 @@ pub struct Login {
     state: Option<ClientLogin<Default>>,
     rng: OsRng,
     session_key: Option<Vec<u8>>,
+    export_key: Option<Vec<u8>>,
 }
 
 #[wasm_bindgen]
@@ -20,6 +21,7 @@ impl Login {
             rng: OsRng,
             state: None,
             session_key: None,
+            export_key: None,
         }
     }
 
@@ -53,12 +55,18 @@ impl Login {
             .unwrap();
 
         self.session_key = Some(result.session_key);
+        self.export_key = Some(result.export_key.to_vec());
 
         return Ok(result.message.serialize());
     }
 
     #[wasm_bindgen(js_name = getSessionKey)]
-    pub fn get_session_key(self) -> Result<Vec<u8>, JsValue> {
-        return Ok(self.session_key.unwrap());
+    pub fn get_session_key(&self) -> Result<Vec<u8>, JsValue> {
+        return Ok(self.session_key.to_owned().unwrap().to_vec());
+    }
+
+    #[wasm_bindgen(js_name = getExportKey)]
+    pub fn get_export_key(&self) -> Result<Vec<u8>, JsValue> {
+        return Ok(self.export_key.to_owned().unwrap());
     }
 }

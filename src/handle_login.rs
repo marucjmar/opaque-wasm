@@ -1,14 +1,15 @@
 use crate::hash_methods::Default;
+use crate::server_setup::ServerSetup;
 use opaque_ke::{
     CredentialFinalization, CredentialRequest, ServerLogin,
-    ServerLoginStartParameters, ServerRegistration,
-    ServerSetup
+    ServerLoginStartParameters, ServerRegistration
 };
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct HandleLogin {
+    setup: ServerSetup,
     state: Option<ServerLogin<Default>>,
     rng: OsRng,
 }
@@ -16,8 +17,9 @@ pub struct HandleLogin {
 #[wasm_bindgen]
 impl HandleLogin {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> HandleLogin {
+    pub fn new(setup: &ServerSetup) -> HandleLogin {
         HandleLogin {
+            setup: setup.clone(),
             state: None,
             rng: OsRng,
         }
@@ -28,16 +30,13 @@ impl HandleLogin {
         password_file: Vec<u8>,
         identifier: Vec<u8>,
         credential_request: Vec<u8>,
-        server_setup: Vec<u8>,
     ) -> Result<Vec<u8>, JsValue> {
-        let server_setup = ServerSetup::deserialize(&server_setup).unwrap();
-
         let request = CredentialRequest::deserialize(&credential_request[..]).unwrap();
         let password = ServerRegistration::<Default>::deserialize(&password_file[..]).unwrap();
 
         let server_login_start_result = match ServerLogin::start(
             &mut self.rng,
-            &server_setup,
+            self.setup.internal(),
             Some(password),
             request,
             &identifier,

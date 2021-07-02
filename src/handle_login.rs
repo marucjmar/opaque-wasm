@@ -27,17 +27,22 @@ impl HandleLogin {
 
     pub fn start(
         &mut self,
-        password_file: Vec<u8>,
+        password_file: Option<Vec<u8>>,
         identifier: Vec<u8>,
         credential_request: Vec<u8>,
     ) -> Result<Vec<u8>, JsValue> {
+
         let request = CredentialRequest::deserialize(&credential_request[..]).unwrap();
-        let password = ServerRegistration::<Default>::deserialize(&password_file[..]).unwrap();
+
+        let password = match password_file {
+            Some(val) => Some(ServerRegistration::<Default>::deserialize(&val).unwrap()),
+            None => None
+        };
 
         let server_login_start_result = match ServerLogin::start(
             &mut self.rng,
             self.setup.internal(),
-            Some(password),
+            password,
             request,
             &identifier,
             ServerLoginStartParameters::default(),

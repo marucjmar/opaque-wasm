@@ -1,7 +1,7 @@
 [package]
 name = "opaque-wasm"
-version = "0.5.1"
-authors = ["Marcin Lazar <marcin.lazar@pm.me>"]
+version = "1.0.0"
+authors = ["Marcin Lazar <marcin.lazar@pm.me>", "Hawkheart", "r0kk3rz"]
 edition = "2018"
 repository = "https://github.com/marucjmar/opaque-wasm"
 keywords = ["cryptography", "crypto", "opaque", "passwords", "authentication", "wasm", "js", "browser", "webassembly", "node", "wasm-pack", "bindgen", "wasm-bindgen"]

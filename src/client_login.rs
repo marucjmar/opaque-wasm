@@ -1,6 +1,6 @@
 use crate::hash_methods::Default;
 use opaque_ke::{
-    ClientLogin, ClientLoginFinishParameters, ClientLoginStartParameters, CredentialResponse,
+    ClientLogin, ClientLoginFinishParameters, CredentialResponse,
 };
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
@@ -28,8 +28,7 @@ impl Login {
     pub fn start(&mut self, password: &str) -> Result<Vec<u8>, JsValue> {
         let client_login_start_result = match ClientLogin::<Default>::start(
             &mut self.rng,
-            &password.as_bytes(),
-            ClientLoginStartParameters::default(),
+            &password.as_bytes()
         ) {
             Ok(client_login_start_result) => client_login_start_result,
             Err(_e) => return Err("Failed start".into()),

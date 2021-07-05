@@ -1,13 +1,15 @@
 use crate::hash_methods::Default;
+use crate::server_setup::ServerSetup;
 use opaque_ke::{
-    keypair::KeyPair, CredentialFinalization, CredentialRequest, ServerLogin,
-    ServerLoginStartParameters, ServerRegistration,
+    CredentialFinalization, CredentialRequest, ServerLogin,
+    ServerLoginStartParameters, ServerRegistration
 };
 use rand::rngs::OsRng;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct HandleLogin {
+    setup: ServerSetup,
     state: Option<ServerLogin<Default>>,
     rng: OsRng,
 }
@@ -15,8 +17,9 @@ pub struct HandleLogin {
 #[wasm_bindgen]
 impl HandleLogin {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> HandleLogin {
+    pub fn new(setup: &ServerSetup) -> HandleLogin {
         HandleLogin {
+            setup: setup.clone(),
             state: None,
             rng: OsRng,
         }
@@ -24,24 +27,24 @@ impl HandleLogin {
 
     pub fn start(
         &mut self,
-        password_file: Vec<u8>,
+        password_file: Option<Vec<u8>>,
+        identifier: Vec<u8>,
         credential_request: Vec<u8>,
-        server_privatekey: Vec<u8>,
     ) -> Result<Vec<u8>, JsValue> {
-        let server_kp =
-            KeyPair::<curve25519_dalek::ristretto::RistrettoPoint>::from_private_key_slice(
-                &server_privatekey,
-            )
-            .unwrap();
 
         let request = CredentialRequest::deserialize(&credential_request[..]).unwrap();
-        let password = ServerRegistration::<Default>::deserialize(&password_file[..]).unwrap();
+
+        let password = match password_file {
+            Some(val) => Some(ServerRegistration::<Default>::deserialize(&val).unwrap()),
+            None => None
+        };
 
         let server_login_start_result = match ServerLogin::start(
             &mut self.rng,
+            self.setup.internal(),
             password,
-            &server_kp.private(),
             request,
+            &identifier,
             ServerLoginStartParameters::default(),
         ) {
             Ok(message) => message,

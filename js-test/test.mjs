@@ -24,7 +24,7 @@ async function run() {
   console.log('-- server response --', registration_response)
 
 
-  const registration_final = registration.finish(registration_response)
+  const registration_final = registration.finish(password, registration_response)
   console.log('-- client finish --', registration_final)
 
   const password_file = serverRegistration.finish(registration_final)
@@ -43,7 +43,7 @@ async function run() {
 
   console.log('login_response', login_response)
 
-  const login_final = login.finish(login_response)
+  const login_final = login.finish(password, login_response)
   console.log('client login final', login_final)
 
   console.log(login)

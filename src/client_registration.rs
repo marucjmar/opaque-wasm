@@ -29,10 +29,10 @@ impl Registration {
             };
         self.state = Some(client_registration_start_result.state);
 
-        return Ok(client_registration_start_result.message.serialize());
+        return Ok(client_registration_start_result.message.serialize().to_vec());
     }
 
-    pub fn finish(&mut self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+    pub fn finish(&mut self, pass: &str, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
         let message = match RegistrationResponse::deserialize(&message[..]) {
             Ok(message) => message,
             Err(_e) => return Err("Message deserialize failed".into()),
@@ -43,6 +43,7 @@ impl Registration {
 
         let client_finish_registration_result = match state.unwrap().finish(
             &mut rng,
+            pass.as_bytes(),
             message,
             ClientRegistrationFinishParameters::default(),
         ) {
@@ -52,7 +53,7 @@ impl Registration {
 
         self.export_key = Some(client_finish_registration_result.export_key.to_vec());
 
-        return Ok(client_finish_registration_result.message.serialize());
+        return Ok(client_finish_registration_result.message.serialize().to_vec());
     }
 
     #[wasm_bindgen(js_name = getExportKey)]

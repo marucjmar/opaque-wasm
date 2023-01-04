@@ -34,13 +34,13 @@ impl HandleRegistration {
                 Err(_e) => return Err("Message deserialize failed".into()),
             };
 
-        return Ok(server_registration_start_result.message.serialize());
+        return Ok(server_registration_start_result.message.serialize().to_vec());
     }
 
     pub fn finish(self, registration_finish: Vec<u8>) -> Result<Vec<u8>, JsValue> {
         let message = RegistrationUpload::deserialize(&registration_finish[..]).unwrap();
         let password_file = ServerRegistration::<Default>::finish(message);
 
-        return Ok(password_file.serialize());
+        return Ok(password_file.serialize().to_vec());
     }
 }

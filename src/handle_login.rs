@@ -53,13 +53,13 @@ impl HandleLogin {
 
         self.state = Some(server_login_start_result.state);
 
-        return Ok(server_login_start_result.message.serialize());
+        return Ok(server_login_start_result.message.serialize().to_vec());
     }
 
     pub fn finish(self, credential_finish: Vec<u8>) -> Result<Vec<u8>, JsValue> {
         let finish = CredentialFinalization::deserialize(&credential_finish[..]).unwrap();
 
         let result = self.state.unwrap().finish(finish).unwrap();
-        return Ok(result.session_key);
+        return Ok(result.session_key.to_vec());
     }
 }

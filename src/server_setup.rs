@@ -20,7 +20,7 @@ impl ServerSetup {
     }
 
     pub fn serialize(&self) -> Vec<u8> {
-        self.internal.serialize()
+        self.internal.serialize().to_vec()
     }
 
     pub fn deserialize(input: Vec<u8>) -> Result<ServerSetup, JsValue> {

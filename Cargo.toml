@@ -1,6 +1,6 @@
 [package]
 name = "opaque-wasm"
-version = "1.1.0"
+version = "2.0.0"
 authors = ["Marcin Lazar <marcin.lazar@pm.me>", "Hawkheart", "r0kk3rz"]
 edition = "2018"
 repository = "https://github.com/marucjmar/opaque-wasm"

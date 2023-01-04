@@ -25,7 +25,7 @@ try {
   const registration = new Registration();
   const firstMessage = registration.start(password);
   const secondMessage = await sendMessageToServer(firstMessage);
-  const thirdMessage = registration.finish(secondMessage);
+  const thirdMessage = registration.finish(password, secondMessage);
   const { status } = await sendMessageToServer(thirdMessage, { email });
 
   console.log(status); // 204 - Server Return ok, user account has been created
@@ -33,7 +33,7 @@ try {
   const login = new Login();
   const firstLoginMessage = login.start(password);
   const secondLoginMessage = await sendMessageToServer(firstLoginMessage, email);
-  const thirdLoginMessage = login.finish(secondLoginMessage);
+  const thirdLoginMessage = login.finish(password, secondLoginMessage);
   const sessionKey = login.getSessionKey();
   await sendMessageToServer(thirdLoginMessage);
 

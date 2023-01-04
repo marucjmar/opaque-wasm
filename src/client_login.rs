@@ -36,10 +36,10 @@ impl Login {
 
         self.state = Some(client_login_start_result.state);
 
-        return Ok(client_login_start_result.message.serialize());
+        return Ok(client_login_start_result.message.serialize().to_vec());
     }
 
-    pub fn finish(&mut self, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
+    pub fn finish(&mut self, pass: &str, message: Vec<u8>) -> Result<Vec<u8>, JsValue> {
         let message = CredentialResponse::deserialize(&message[..]);
 
         if message.is_err() {
@@ -50,13 +50,13 @@ impl Login {
 
         let result = state
             .unwrap()
-            .finish(message.unwrap(), ClientLoginFinishParameters::default())
+            .finish(pass.as_bytes(), message.unwrap(), ClientLoginFinishParameters::default())
             .unwrap();
 
-        self.session_key = Some(result.session_key);
+        self.session_key = Some(result.session_key.to_vec());
         self.export_key = Some(result.export_key.to_vec());
 
-        return Ok(result.message.serialize());
+        return Ok(result.message.serialize().to_vec());
     }
 
     #[wasm_bindgen(js_name = getSessionKey)]

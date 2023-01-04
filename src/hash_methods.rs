@@ -2,8 +2,8 @@ use opaque_ke::ciphersuite::CipherSuite;
 
 pub struct Default;
 impl CipherSuite for Default {
-    type Group = curve25519_dalek::ristretto::RistrettoPoint;
-    type KeyExchange = opaque_ke::key_exchange::tripledh::TripleDH;
-    type Hash = sha2::Sha512;
-    type SlowHash = argon2::Argon2<'static>;
+    type OprfCs = p256::NistP256;
+    type KeGroup = p256::NistP256;
+    type KeyExchange = opaque_ke::key_exchange::tripledh::TripleDh;
+    type Ksf = argon2::Argon2<'static>;
 }

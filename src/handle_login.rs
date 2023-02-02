@@ -62,4 +62,26 @@ impl HandleLogin {
         let result = self.state.unwrap().finish(finish).unwrap();
         return Ok(result.session_key.to_vec());
     }
+
+    pub fn serialize(&self) -> Result<Vec<u8>, JsValue> {
+        match &self.state {
+            Some(state) => Ok(state.serialize().to_vec()),
+            None => Err("Failed to serialize ServerLogin (no state available)".into()),
+        }
+    }
+
+    pub fn deserialize(
+        serialized_state: Vec<u8>,
+        setup: &ServerSetup,
+    ) -> Result<HandleLogin, JsValue> {
+        let state = match opaque_ke::ServerLogin::<Default>::deserialize(&serialized_state) {
+            Ok(val) => val,
+            Err(_) => return Err("Failed to load serialized ServerLogin".into()),
+        };
+        Ok(HandleLogin {
+            setup: setup.clone(),
+            state: Some(state),
+            rng: OsRng,
+        })
+    }
 }

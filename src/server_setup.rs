@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 use rand::rngs::OsRng;
 
 #[wasm_bindgen]
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct ServerSetup {
     internal: opaque_ke::ServerSetup<Default>
 }
@@ -37,5 +37,20 @@ impl ServerSetup {
 
     pub(crate) fn internal<'a>(&'a self) -> &'a opaque_ke::ServerSetup<Default> {
         &self.internal
+    }
+}
+
+// --
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn server_setup_serde() {
+        let setup1 = ServerSetup::new();
+        let serialized = setup1.serialize();
+        let setup2 = ServerSetup::deserialize(serialized).unwrap();
+        assert_eq!(setup1, setup2);
     }
 }

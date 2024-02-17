@@ -1,3 +1,5 @@
+## Important: This project is not maintained anymore. If you are looking for an alternative please check out [github.com/serenity-kit/opaque](https://github.com/serenity-kit/opaque).
+
 [![Build Status](https://travis-ci.com/marucjmar/opaque-wasm.svg?branch=master)](https://travis-ci.com/marucjmar/opaque-wasm)
 
 ## opaque-wasm
